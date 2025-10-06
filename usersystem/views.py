@@ -21,7 +21,7 @@ def fail(msg="bad request", status=400, data=None):
 class RegisterView(APIView):
     """
     POST /api/register
-    body: { "username": "abcxyz", "password": "123456" }
+    body: { "username": "abcxyz", "password": "123456","role": "admin" }
     """
     def post(self, request):
         ser = UserSerializer(data=request.data)
@@ -33,7 +33,7 @@ class RegisterView(APIView):
             return fail(msg="username already exists", status=400)
 
         user = ser.save()
-        return success(data={"id": user.id, "username": user.username}, msg="registered", status=200)
+        return success(data={"id": user.id, "username": user.username,"role":user.role}, msg="registered", status=200)
 
 class LoginView(APIView):
     """
@@ -56,4 +56,4 @@ class LoginView(APIView):
             return fail("username or password incorrect", 401)
 
         # if requires JWT， djangorestframework-simplejwt
-        return success(data={"id": user.id, "username": user.username}, msg="login success", status=200)
+        return success(data={"id": user.id, "username": user.username,"role":user.role}, msg="login success", status=200)

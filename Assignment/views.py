@@ -18,7 +18,7 @@ def create_assignment(request):
                 assignment_type=assignment_type
             )
 
-            return HttpResponse('good') # 替换为你的路由名
+            return HttpResponse('good')
     else:
         form = AssignmentForm()
     return render(request, "Assignment.html", {"form": form})
@@ -32,6 +32,3 @@ def query_assignment(request):
         print('due: ',assignment.due_date)
         print('type: ',assignment.assignment_type)
     return HttpResponse("query completed")
-
-def AIUseScale(request):
-    return render(request, "AIUseScale.html")

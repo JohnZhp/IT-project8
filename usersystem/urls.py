@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView  # 按你的 app 名称调整
+from .views import RegisterView, LoginView
 
 urlpatterns = [
     path("api/register", RegisterView.as_view()),
