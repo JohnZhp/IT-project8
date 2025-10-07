@@ -8,4 +8,5 @@ urlpatterns = [
     path('', include('usersystem.urls')),
     path('', include('Assignment.urls')),
     path('api/', include('AIUseScale.urls')),
+    path('api/', include('Assignment.urls')),
 ]

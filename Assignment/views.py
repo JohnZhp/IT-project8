@@ -1,34 +1,32 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from .forms import AssignmentForm
+# Assignment/views.py
+from rest_framework import viewsets, permissions, filters, status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+
 from .models import Assignment
+from .serializer import AssignmentSerializer
 
-def create_assignment(request):
-    if request.method == "POST":
-        form = AssignmentForm(request.POST or None)
-        if form.is_valid():
-            subject = form.cleaned_data.get('subject')
-            assignment_title = form.cleaned_data.get('assignment_title')
-            due_date = form.cleaned_data.get('due_date')
-            assignment_type = form.cleaned_data.get('assignment_type')
-            Assignment.objects.create(
-                subject=subject,
-                assignment_title=assignment_title,
-                due_date=due_date,
-                assignment_type=assignment_type
-            )
+class DefaultPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
-            return HttpResponse('good')
-    else:
-        form = AssignmentForm()
-    return render(request, "Assignment.html", {"form": form})
+class AssignmentViewSet(viewsets.ModelViewSet):
+    """
+    /api/assignments/  list/create
+    /api/assignments/{id}/  update/delete
+    allow：?search=keyword（subject / assignment_title）
+         ?ordering=due_date|-due_date|created_at|-created_at
+    """
+    queryset = Assignment.objects.all().order_by("-created_at")
+    serializer_class = AssignmentSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = DefaultPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["subject", "assignment_title"]
+    ordering_fields = ["due_date", "created_at", "assignment_title", "subject"]
 
-def query_assignment(request):
-    assignments = Assignment.objects.all()
-    for assignment in assignments:
-        print('id: ',assignment.id)
-        print('subject: ',assignment.subject)
-        print('title: ',assignment.assignment_title)
-        print('due: ',assignment.due_date)
-        print('type: ',assignment.assignment_type)
-    return HttpResponse("query completed")
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "deleted successfully"}, status=status.HTTP_200_OK)
