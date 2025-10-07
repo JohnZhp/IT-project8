@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'usersystem',
     'AIUseScale',
+    'courses',
+    'template',
 
 ]
 
